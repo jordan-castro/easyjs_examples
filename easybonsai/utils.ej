@@ -1,5 +1,5 @@
 struct Line {
-    fn constructor() {
+    fn constructor(self) {
         self.start = null
         self.end = null
 
@@ -11,7 +11,7 @@ struct Line {
 
     fn get_y(self, x) {
         if not self.is_vertical {
-            return self.m * x + self.c
+            return (self.m * x) + self.c
         }
     }
     
@@ -21,5 +21,59 @@ struct Line {
         } elif self.m != 0 {
             return (y - self.c) / self.m
         }
+    }
+
+    fn set_end_points(self, start, end) {
+        self.start = start
+        self.end = end
+
+        if self.start[0] == self.end[0] {
+            self.is_vertical = true
+            self.m = null
+            self.c = self.start[0]
+        } else {
+            self.m = (self.start[1] - self.end[1]) / (self.start[0] - self.end[0])
+            self.c = self.start[1] - self.m * self.start[0] 
+        }
+    }
+
+    fn set_gradient(self, m, point) {
+        self.m = m
+        self.c = point[1] - m * point[0]
+    }
+
+    fn get_theta(self) {
+        // get angle above the x axis
+        if self.is_vertical {
+            return Math.PI / 2 
+        } else {
+            return Math.atan(self.m)
+        }
+    }
+}
+
+struct Vector {
+    fn constructor(self, x, y) {
+        self.x = x
+        self.y = y
+    }
+
+    fn mag(self) {
+        return Math.sqrt(javascript{this.x**2 + this.y**2})
+    }
+
+    fn add(self, other) {
+        return Vector(self.x + other.x, self.y + other.y)
+    }
+
+    fn mul(self, other) {
+        return Vector(self.x * other.x, self.y * other.y)
+    }
+
+    fn normalize(self) {
+        m = self.mag()
+
+        self.x = self.x / m
+        sekf.y = self.y / m
     }
 }

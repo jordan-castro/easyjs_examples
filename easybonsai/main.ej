@@ -2,6 +2,7 @@
 // This is to demonstrate the power of EasyJS and how similar it is to other easy to write/read scripting languages.
 
 import "std"
+import "utils.ej"
 
 VERSION := "1.0.0"
 DESC := "Easy Bonsai procedurally generates ASCII art trees in your terminal."
@@ -10,8 +11,17 @@ DESC := "Easy Bonsai procedurally generates ASCII art trees in your terminal."
 @print(DESC)
 @print(VERSION)
 
-struct Tree {
-    fn constructor(val) {
-        self.val = val
-    }
-}
+// struct Tree {
+//     fn constructor(val) {
+//         self.val = val
+//     }
+// }
+
+// make a new vector
+vec1 = Vector(0, 0)
+vec2 = Vector(10, 10)
+vec3 = vec1.add(vec2)
+
+@print(vec1)
+@print(vec2)
+@print(vec3)
