@@ -1,0 +1,25 @@
+struct Line {
+    fn constructor() {
+        self.start = null
+        self.end = null
+
+        self.m = null
+        self.c = null
+
+        self.is_vertical = false
+    }
+
+    fn get_y(self, x) {
+        if not self.is_vertical {
+            return self.m * x + self.c
+        }
+    }
+    
+    fn get_x(self, y) {
+        if self.is_vertical {
+            return self.c
+        } elif self.m != 0 {
+            return (y - self.c) / self.m
+        }
+    }
+}
