@@ -73,7 +73,7 @@ struct Vector {
     fn normalize(self) {
         m = self.mag()
 
-        self.x = self.x / m
-        sekf.y = self.y / m
+        self.x /= m
+        self.y /= m
     }
 }

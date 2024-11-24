@@ -61,8 +61,8 @@ class Vector {
         return new Vector(this.x * other.x, this.y * other.y);
     } normalize() {
         let m = this.mag();
-        this.x = this.x / m;
-        sekf.y = this.y / m;
+        this.x /= m;
+        this.y /= m;
     }
 }
 const VERSION = '1.0.0';
