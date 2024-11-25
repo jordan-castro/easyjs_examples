@@ -1,0 +1,152 @@
+import "utils.ej"
+
+struct Tree {
+    BOX_HEIGHT := 3
+    MAX_TOP_WIDTH := 35
+
+    MOUND_THRESHOLD := 0.1    
+    SOIL_CHAR_THRESHOLD := 0.1
+
+    SOIL_CHARS := ".~*"
+
+    MOUND_WIDTH_MEAN := 2
+    MOUND_WIDTH_STD_DEV := 1
+
+    SOIL_COLOR := [0, 150, 0]
+    BOX_COLOR := [200, 200, 200]
+
+    BRANCH_COLOR := [[200,255], [150,255], [0,0]]
+
+    fn new(window, root_pos, options) {
+        self.window = window
+        // implement var1,var2 = array // var1 = array[0] var2 = array[1]
+        self.root_x = root_pos[0]
+        self.root_y = root_pos[1]
+        self.options = options
+
+        self.box_top_width = self.get_box_width()
+    }
+
+    // notes from this: add a math module...
+    fn get_box_width(self) {
+        width := Math.min(
+            Math.floor(self.window.width / 3),
+            Tree.MAX_TOP_WIDTH
+        )
+
+        if width % 2 == 0 {
+            width += 1 // width should be odd to allow tree to go in middle
+        }
+
+        return width
+    }
+
+    fn draw_box(self) {
+        root_inx := self.window.plane_to_screen(self.root_x, self.root_y)
+        root_inx1 = root_inx[0]
+        root_inx2 = root_inx[1]
+
+        for i in 0..Tree.BOX_HEIGHT {
+            inx1 = root_inx1 + i
+            width = self.box_top_width - i * 2
+
+            for j in 0..width {
+                inx2 = root_inx2 - Math.floor(width / 2) + j
+                char = " "
+                char_color = Tree.SOIL_COLOR
+                if j == 0 {
+                    char = "\\"
+                    char_color = Tree.BOX_COLOR
+                } elif j == width - 1 {
+                    char = "/"
+                    char_color = Tree.BOX_COLOR
+                } elif i == 0 {
+                    char = "_"
+                    char_color = Tree.SOIL_COLOR
+                } elif i == Tree.BOX_HEIGHT - 1 {
+                    char = "_"
+                    char_color = Tree.BOX_COLOR
+                } else {
+                    if Math.random() < Tree.SOIL_CHAR_THRESHOLD {
+                        char = @random_choice(Tree.SOIL_CHARS)
+                    } else {
+                        char = " "
+                    }
+
+                    char_color = Tree.SOIL_COLOR
+                }
+
+                self.window.set_char_instant(inx1, inx2, char, char_color, true)
+            }
+        }
+
+        self.draw_box_feet(root_inx1, root_inx2)
+        self.draw_all_mounds(root_inx1, root_inx2)
+    }
+
+    fn draw_box_feet(self, root_inx1, root_inx2) {
+        inx1 := root_inx1 + Tree.BOX_HEIGHT
+        offset := Math.floor(self.box_top_width / 2) - Tree.BOX_HEIGHT - 1
+
+        for sign in [-1, 1] {
+            inx2 = root_inx2 + sign * offset
+            self.window.set_char_instant(inx1, inx2, "‾", Tree.BOX_COLOR, true)
+        }
+    }
+
+    fn draw_all_mounds(self, root_inx1, root_inx2) {
+        // draw .---._____.--. on top layer
+        num_drawn = 0
+
+        for i in 1..self.box_top_width {
+            inx2 = root_inx2 - Math.floor(self.box_top_width / 2) + i
+
+            if Math.random() < Tree.MOUND_THRESHOLD / (num_drawn + 1) {
+                num_drawn += 1
+                max_width = self.box_top_width - i - 1
+
+                self.draw_mound(root_inx1, inx2, max_width)
+            }
+        }
+    }
+
+    fn draw_mound(self, inx1, start_inx2, max_width) {
+        top_width = Math.round(random_normal(Tree.MOUND_WIDTH_MEAN, Tree.MOUND_WIDTH_STD_DEV))
+        top_width = Math.min(top_width, max_width - 2)
+
+        if top_width <= 0 {
+            return
+        }
+
+        for i in 0..top_width + 2 {
+            inx2 = start_inx2 + i
+
+            if i == 0 or i == top_width + 1 {
+                char = "."
+            } else {
+                char = "-"
+            }
+
+            self.window.set_char_instant(inx1, inx2, char, Tree.SOIL_COLOR, true)
+        }
+    }
+
+    fn draw_tree_base(self, trunk_width) {
+        // add some extra padding at the bottom to look nice
+        inxes := self.window.plane_to_screen(self.root_x, self.root_y)
+        inx1 := inxes[0]
+        inx2 := inxes[1]
+
+        left_x = inx2 - Math.floor(trunk_width / 2)
+        right_x = inx2 + Math.floor(trunk_width / 2
+        
+        if trunk_width % 2 == 0 {
+            right_x -= 1
+        }
+        
+        self.window.set_char_instant(inx1, left_x - 2, ".", [255, 255, 0], true)
+        self.window.set_char_instant(inx1, left_x - 1, "/", [255, 255, 0], true)
+        self.window.set_char_instant(inx1, right_x + 1, "\\", [255, 255, 0], true))
+        self.window.set_char_instant(inx1, right_x + 2, ".", [255, 255, 0], true))
+    }
+}
